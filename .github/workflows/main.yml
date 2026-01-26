@@ -42,12 +42,12 @@ jobs:
       - name: Add wxWidgets (Headers)
         run: |
           mkdir ${{ env.WXDIR }}
-          lwp-download https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX }}/wxWidgets-${{ env.WX }}-headers.7z wxWidgets-headers.7z
+          Invoke-WebRequest -Uri "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX }}/wxWidgets-${{ env.WX }}-headers.7z" -OutFile "wxWidgets-headers.7z"
           7z x -o${{ env.WXDIR }} wxWidgets-headers.7z
 
       - name: Add wxWidgets (Dev)
         run: |
-          lwp-download https://github.com/wxWidgets/wxWidgets/releases/download/v${{env.WX }}/wxMSW-${{ env.WX }}_${{ env.GCC }}_x64_Dev.7z wxMSW_Dev.7z
+          Invoke-WebRequest -Uri "https://github.com/wxWidgets/wxWidgets/releases/download/v${{env.WX }}/wxMSW-${{ env.WX }}_${{ env.GCC }}_x64_Dev.7z" -OutFile "wxMSW_Dev.7z"
           7z x -aoa -o${{ env.WXDIR }} wxMSW_Dev.7z
 
       - name: Add wxWidgets (PATH)
@@ -56,7 +56,7 @@ jobs:
         
       - name: Add Alien::wxWidgets
         run: |
-          lwp-download https://github.com/sciurius/perl-Alien-wxWidgets/releases/download/R${{ env.AWV }}/Alien-wxWidgets-${{ env.AWV }}.tar.gz AWV.tar.gz
+          Invoke-WebRequest -Uri "https://github.com/sciurius/perl-Alien-wxWidgets/releases/download/R${{ env.AWV }}/Alien-wxWidgets-${{ env.AWV }}.tar.gz" -OutFile "AWV.tar.gz"
           tar xf AWV.tar.gz
           cd Alien-wxWidgets-${{ env.AWV }}
           mkdir ${{ env.PV }}/Alien/wxWidgets/Config
@@ -69,7 +69,7 @@ jobs:
 
       - name: Add wxPerl
         run: |
-          lwp-download https://github.com/sciurius/wxPerl/releases/download/R${{ env.WXV }}/Wx-${{ env.WXV }}.tar.gz wxPerl.tar.gz
+          Invoke-WebRequest -Uri "https://github.com/sciurius/wxPerl/releases/download/R${{ env.WXV }}/Wx-${{ env.WXV }}.tar.gz" -OutFile "wxPerl.tar.gz"
           tar xf wxPerl.tar.gz
           cd Wx-${{ env.WXV }}
           perl Makefile.PL
