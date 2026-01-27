@@ -46,7 +46,7 @@ jobs:
         run: |
           cd ${{ env.WXDIR }}/build/msw
           gmake -f makefile.gcc SHELL=cmd.exe BUILD=release SHARED=1 setup_h
-          gmake -f makefile.gcc SHELL=cmd.exe -j BUILD=release SHARED=1
+          gmake -f makefile.gcc SHELL=cmd.exe BUILD=release SHARED=1
 
       - name: Add wxWidgets (PATH)
         run: |
