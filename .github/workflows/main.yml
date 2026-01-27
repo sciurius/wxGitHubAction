@@ -9,9 +9,6 @@ env:
   WX:     3.2.9
   WXDIR:  C:\wxWidgets-3.2.9
 
-  # Gcc 'tag' for wxWidgets
-  GCC:    gcc1320
-
   # Strawberry Perl version
   PERL:   "5.42.0"
   PERLDL: perl542
@@ -39,20 +36,22 @@ jobs:
       - run: cpanm ExtUtils::XSpp
       - run: cpanm Net::SSLeay --notest
 
-      - name: Add wxWidgets (Headers)
+      - name: Add wxWidgets (Source)
         run: |
           mkdir ${{ env.WXDIR }}
-          Invoke-WebRequest -Uri "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX }}/wxWidgets-${{ env.WX }}-headers.7z" -OutFile "wxWidgets-headers.7z"
-          7z x -o${{ env.WXDIR }} wxWidgets-headers.7z
+          Invoke-WebRequest -Uri "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX }}/wxWidgets-${{ env.WX }}.7z" -OutFile "wxWidgets.7z"
+          7z x -o${{ env.WXDIR }} wxWidgets.7z
 
-      - name: Add wxWidgets (Dev)
+      - name: Build wxWidgets
         run: |
-          Invoke-WebRequest -Uri "https://github.com/wxWidgets/wxWidgets/releases/download/v${{env.WX }}/wxMSW-${{ env.WX }}_${{ env.GCC }}_x64_Dev.7z" -OutFile "wxMSW_Dev.7z"
-          7z x -aoa -o${{ env.WXDIR }} wxMSW_Dev.7z
+          cd ${{ env.WXDIR }}
+          cd build/msw
+          gmake -f makefile.gcc BUILD=release SHARED=1 setup_h
+          gmake -f makefile.gcc -j BUILD=release SHARED=1
 
       - name: Add wxWidgets (PATH)
         run: |
-          echo "${{ env.WXDIR }}\lib\${{ env.GCC }}_x64_dll" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
+          echo "${{ env.WXDIR }}\lib\gcc_dll" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
         
       - name: Add Alien::wxWidgets
         run: |
@@ -64,7 +63,7 @@ jobs:
           copy lib/Alien/wxWidgets/Utility.pm ${{ env.PV }}/Alien/wxWidgets
           perl script/make_cfg.pl "--wxdir=${{ env.WXDIR }}" "--output=%{sitelib}/%{alien_config}"
           cd ..
-          rm -r Alien-wxWidgets-${{ env.AWV }}
+          rm -Recurse -Force Alien-wxWidgets-${{ env.AWV }}
           perl -MAlien::wxWidgets -E "say Alien::wxWidgets->prefix"
 
       - name: Add wxPerl
@@ -77,7 +76,7 @@ jobs:
           perl -Mblib -MWx -E 'say $Wx::VERSION'
           gmake install
           cd ..
-          rm -r -force Wx-${{ env.WXV }}
+          rm -Recurse -Force Wx-${{ env.WXV }}
 
       - name: Test wxPerl
         run: |
