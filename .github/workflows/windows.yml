@@ -80,6 +80,6 @@ jobs:
       - name: Test wxPerl
         run: |
           echo $Env:PATH
-          perl -MWx -E "say join(q{ },$Wx::VERSION,$Wx::wxVERSION)"
+          perl -MWx -E 'say join(q{ },$Wx::VERSION,$Wx::wxVERSION)'
 
  
