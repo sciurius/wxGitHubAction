@@ -53,10 +53,10 @@ Function Add-PathVariable {
 
 ################ Main ################
 
-$7z = Get-Command 7z
-if ( -not $7z ) {
-    msg "Please install 7z first."
-    exit;
+if ( 1 ) {
+    msg "Install 7zip (local)"
+    $kit = Fetch-Kit "https://www.7-zip.org/a/7zr.exe"
+    $7z = Get-Command ".\$kit"
 }
 
 if ( Test-Path -path $wxdir ) {
