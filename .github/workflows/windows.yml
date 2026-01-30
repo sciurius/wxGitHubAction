@@ -1,6 +1,8 @@
 name: wxPerl build for Microsoft Windows
 
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 # Environment variables.
 env:
@@ -36,17 +38,24 @@ jobs:
       - run: cpanm ExtUtils::XSpp
       - run: cpanm Net::SSLeay --notest
 
-      - name: Add wxWidgets (Source)
+      - name: Cache wxWidgets
+        id: cache-wxwidgets
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.WXDIR }}
+          key: wxWidgets-${{ env.WX }}-${{ runner.os }}
+
+      - name: Acquire and Build wxWidgets (if not cached)
+        if: steps.cache-wxwidgets.outputs.cache-hit != 'true'
         run: |
           mkdir ${{ env.WXDIR }}
           Invoke-WebRequest -Uri "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX }}/wxWidgets-${{ env.WX }}.7z" -OutFile "wxWidgets.7z"
           7z x -o${{ env.WXDIR }} wxWidgets.7z
-
-      - name: Build wxWidgets
-        run: |
           cd ${{ env.WXDIR }}/build/msw
           gmake -f makefile.gcc SHELL=cmd.exe BUILD=release SHARED=1 setup_h
           gmake -f makefile.gcc -j5 SHELL=cmd.exe BUILD=release SHARED=1
+          # delete object files to decrease the cache size
+          rm -Recurse -Force ${{ env.WXDIR }}/build/msw/gcc_mswudll
 
       - name: Add wxWidgets (PATH)
         run: |
