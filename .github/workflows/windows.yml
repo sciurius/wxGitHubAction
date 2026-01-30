@@ -46,7 +46,7 @@ jobs:
         run: |
           cd ${{ env.WXDIR }}/build/msw
           gmake -f makefile.gcc SHELL=cmd.exe BUILD=release SHARED=1 setup_h
-          gmake -f makefile.gcc -j4 SHELL=cmd.exe BUILD=release SHARED=1
+          gmake -f makefile.gcc -j5 SHELL=cmd.exe BUILD=release SHARED=1
 
       - name: Add wxWidgets (PATH)
         run: |
@@ -71,7 +71,7 @@ jobs:
           tar xf wxPerl.tar.gz
           cd Wx-${{ env.WXV }}
           perl Makefile.PL
-          gmake -j4
+          gmake -j5
           perl -Mblib -MWx -E 'say $Wx::VERSION'
           gmake install
           cd ..
