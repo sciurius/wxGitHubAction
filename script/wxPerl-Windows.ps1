@@ -44,7 +44,7 @@ Function Add-PathVariable {
     if ( Test-Path $addPath ) {
         $regexAddPath = [regex]::Escape($addPath)
         $arrPath = $env:Path -split ';' | Where-Object {$_ -notMatch "^$regexAddPath\\?"}
-        $env:Path = ($arrPath + $addPath) -join ';'
+        $env:Path = $($addPath; $arrPath) -join ';'
     }
     else {
         Throw "'$addPath' is not a valid path."
