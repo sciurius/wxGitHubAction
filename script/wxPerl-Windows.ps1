@@ -53,11 +53,16 @@ Function Add-PathVariable {
 
 ################ Main ################
 
-if ( 1 ) {
+$7z = ".\7za.exe"
+if (!(Test-Path -path $7z)) {
     msg "Install 7zip (local)"
     $kit = Fetch-Kit "https://www.7-zip.org/a/7zr.exe"
-    $7z = Get-Command ".\$kit"
+    $7zr = Get-Command ".\$kit"
+
+    $kit = Fetch-Kit "https://github.com/ip7z/7zip/releases/download/26.00/7z2600-extra.7z"
+    &$7zr x $kit
 }
+$7z = Get-Command $7z
 
 if ( Test-Path -path $wxdir ) {
     msg "Found $wxdir, skipping wxWidgets install"
